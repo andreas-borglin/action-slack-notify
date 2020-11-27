@@ -44,12 +44,19 @@ type Attachment struct {
 	AuthorIcon string  `json:"author_icon,omitempty"`
 	Footer     string  `json:"footer,omitempty"`
 	Fields     []Field `json:"fields,omitempty"`
+	Actions    []Action `json:"actions,omitempty"`
 }
 
 type Field struct {
 	Title string `json:"title,omitempty"`
 	Value string `json:"value,omitempty"`
 	Short bool   `json:"short,omitempty"`
+}
+
+type Action struct {
+	Type string `json:"type,omitempty"`
+	Text string `json:"text,omitempty"`
+	Url  string `json:"url,omitempty"`
 }
 
 func main() {
@@ -63,6 +70,13 @@ func main() {
 		fmt.Fprintln(os.Stderr, "Message is required")
 		os.Exit(1)
 	}
+	
+	ref := os.Getenv("GITHUB_REF")
+	refStart := 10
+	if strings.Contains(ref, "heads") {
+		refStart = 11	
+	}
+	refShort := ref[refStart:len(ref)]
 
 	minimal := os.Getenv(EnvMinimal)
 	fields := []Field{}
@@ -119,7 +133,7 @@ func main() {
 	} else {
 		mainFields := []Field{
 			{
-				Title: "Ref",
+				Title: "Version",
 				Value: os.Getenv("GITHUB_REF"),
 				Short: true,
 			}, {
@@ -157,6 +171,19 @@ func main() {
 		}
 		fields = append(newfields, fields...)
 	}
+	
+	actions:= []Action {
+		{
+			Type: "button",
+			Text: "Changelog",
+			Url: os.Getenv(EnvChangeLogUrl),
+		},
+		{
+			Type: "button",
+			Text: "Downloads",
+			Url: os.Getenv(EnvReleasesUrl),
+		},
+	}
 
 	msg := Webhook{
 		UserName:  os.Getenv(EnvSlackUserName),
@@ -172,6 +199,7 @@ func main() {
 				AuthorIcon: "http://github.com/" + os.Getenv(EnvGithubActor) + ".png?size=32",
 				Footer:     envOr(EnvSlackFooter, "<https://github.com/rtCamp/github-actions-library|Powered By rtCamp's GitHub Actions Library>"),
 				Fields:     fields,
+				Actions:    actions,
 			},
 		},
 	}
