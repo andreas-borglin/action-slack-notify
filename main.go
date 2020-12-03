@@ -23,6 +23,8 @@ const (
 	EnvSiteName       = "SITE_NAME"
 	EnvHostName       = "HOST_NAME"
 	EnvVariants       = "VARIANTS"
+	EnvChangeLogUrl   = "CHANGELOG_URL"
+	EnvReleasesUrl    = "RELEASES_URL"
 )
 
 type Webhook struct {
@@ -78,7 +80,6 @@ func main() {
 	}
 	refShort := ref[refStart:len(ref)]
 
-	minimal := os.Getenv(EnvMinimal)
 	fields := []Field{}
 	mainFields := []Field{
 		{
