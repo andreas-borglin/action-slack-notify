@@ -23,6 +23,7 @@ const (
 	EnvSiteName       = "SITE_NAME"
 	EnvHostName       = "HOST_NAME"
 	EnvMinimal        = "MSG_MINIMAL"
+	EnvVariants       = "VARIANTS"
 )
 
 type Webhook struct {
@@ -134,17 +135,12 @@ func main() {
 		mainFields := []Field{
 			{
 				Title: "Version",
-				Value: os.Getenv("GITHUB_REF"),
+				Value: refShort,
 				Short: true,
 			}, {
-				Title: "Event",
-				Value: os.Getenv("GITHUB_EVENT_NAME"),
+				Title: "Variants",
+				Value: os.Getenv(EnvVariants),
 				Short: true,
-			},
-			{
-				Title: "Actions URL",
-				Value: "https://github.com/" + os.Getenv("GITHUB_REPOSITORY") + "/commit/" + os.Getenv("GITHUB_SHA") + "/checks",
-				Short: false,
 			},
 			{
 				Title: os.Getenv(EnvSlackTitle),
@@ -180,7 +176,7 @@ func main() {
 		},
 		{
 			Type: "button",
-			Text: "Downloads",
+			Text: "View release",
 			Url: os.Getenv(EnvReleasesUrl),
 		},
 	}
