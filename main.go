@@ -87,7 +87,7 @@ func main() {
 	mainFields := []Field{
 		{
 			Title: "Version",
-			Value: os.Getenv(EnvVersionName),
+			Value: refShort,
 			Short: true,
 		}, 
 		{
