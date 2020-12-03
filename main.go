@@ -89,24 +89,10 @@ func main() {
 			Title: "Version",
 			Value: os.Getenv(EnvVersionName),
 			Short: true,
-		}, {
-			Title: "Environment",
-			Value: os.Getenv(EnvEnvironment),
-			Short: true,
-		},
+		}, 
 		{
-			Title: "Built from",
-			Value: refShort,
-			Short: true,
-		},
-		{
-			Title: "Triggered by",
+			Title: "Created by",
 			Value: envOr(EnvGithubActor, "N/A"),
-			Short: true,
-		},
-		{
-			Title: "Base URL",
-			Value: envOr(EnvBaseUrl, "N/A"),
 			Short: true,
 		},
 	}
