@@ -25,7 +25,8 @@ const (
 	EnvVariants       = "VARIANTS"
 	EnvChangeLogUrl   = "CHANGELOG_URL"
 	EnvReleasesUrl    = "RELEASES_URL"
-	EnvSlackPretext  = "SLACK_PRETEXT"
+	EnvSlackPretext   = "SLACK_PRETEXT"
+	EnvVersionName.   = "VERSION_NAME
 )
 
 type Webhook struct {
@@ -85,7 +86,7 @@ func main() {
 	mainFields := []Field{
 		{
 			Title: "Version",
-			Value: refShort,
+			Value: os.Getenv(EnvVersionName),
 			Short: true,
 		}, {
 			Title: "Variants",
@@ -93,9 +94,14 @@ func main() {
 			Short: true,
 		},
 		{
-			Title: os.Getenv(EnvSlackTitle),
-			Value: envOr(EnvSlackMessage, "EOM"),
-			Short: false,
+			Title: "Built from",
+			Value: refShort,
+			Short: true,
+		},
+		{
+			Title: "Triggered by",
+			Value: envOr(EnvGithubActor, "N/A"),
+			Short: true,
 		},
 	}
 	fields = append(mainFields, fields...)
