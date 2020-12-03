@@ -22,7 +22,6 @@ const (
 	EnvGithubActor    = "GITHUB_ACTOR"
 	EnvSiteName       = "SITE_NAME"
 	EnvHostName       = "HOST_NAME"
-	EnvMinimal        = "MSG_MINIMAL"
 	EnvVariants       = "VARIANTS"
 )
 
@@ -81,92 +80,23 @@ func main() {
 
 	minimal := os.Getenv(EnvMinimal)
 	fields := []Field{}
-	if minimal == "true" {
-		mainFields := []Field{
-			{
-				Title: os.Getenv(EnvSlackTitle),
-				Value: envOr(EnvSlackMessage, "EOM"),
-				Short: false,
-			},
-		}
-		fields = append(mainFields, fields...)
-	} else if minimal != "" {
-		requiredFields := strings.Split(minimal, ",")
-		mainFields := []Field{
-			{
-				Title: os.Getenv(EnvSlackTitle),
-				Value: envOr(EnvSlackMessage, "EOM"),
-				Short: false,
-			},
-		}
-		for _,requiredField := range requiredFields {
-			switch strings.ToLower(requiredField) {
-			case "ref":
-				field := []Field{
-					{
-						Title: "Ref",
-						Value: os.Getenv("GITHUB_REF"),
-						Short: true,
-					},
-				}
-				mainFields = append(field, mainFields...)
-			case "event":
-				field := []Field{
-					{
-						Title: "Event",
-						Value: os.Getenv("GITHUB_EVENT_NAME"),
-						Short: true,
-					},
-				}
-				mainFields = append(field, mainFields...)
-			case "actions url":
-				field := []Field{
-					{
-						Title: "Actions URL",
-						Value: "https://github.com/" + os.Getenv("GITHUB_REPOSITORY") + "/commit/" + os.Getenv("GITHUB_SHA") + "/checks",
-						Short: false,
-					},
-				}
-				mainFields = append(field, mainFields...)
-			}
-		}
-		fields = append(mainFields, fields...)
-	} else {
-		mainFields := []Field{
-			{
-				Title: "Version",
-				Value: refShort,
-				Short: true,
-			}, {
-				Title: "Variants",
-				Value: os.Getenv(EnvVariants),
-				Short: true,
-			},
-			{
-				Title: os.Getenv(EnvSlackTitle),
-				Value: envOr(EnvSlackMessage, "EOM"),
-				Short: false,
-			},
-		}
-		fields = append(mainFields, fields...)
+	mainFields := []Field{
+		{
+			Title: "Version",
+			Value: refShort,
+			Short: true,
+		}, {
+			Title: "Variants",
+			Value: os.Getenv(EnvVariants),
+			Short: true,
+		},
+		{
+			Title: os.Getenv(EnvSlackTitle),
+			Value: envOr(EnvSlackMessage, "EOM"),
+			Short: false,
+		},
 	}
-
-	hostName := os.Getenv(EnvHostName)
-	if hostName != "" {
-		newfields := []Field{
-			{
-				Title: os.Getenv("SITE_TITLE"),
-				Value: os.Getenv(EnvSiteName),
-				Short: true,
-			},
-			{
-				Title: os.Getenv("HOST_TITLE"),
-				Value: os.Getenv(EnvHostName),
-				Short: true,
-			},
-		}
-		fields = append(newfields, fields...)
-	}
+	fields = append(mainFields, fields...)
 	
 	actions:= []Action {
 		{
