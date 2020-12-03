@@ -22,11 +22,12 @@ const (
 	EnvGithubActor    = "GITHUB_ACTOR"
 	EnvSiteName       = "SITE_NAME"
 	EnvHostName       = "HOST_NAME"
-	EnvVariants       = "VARIANTS"
+	EnvEnvironment    = "ENVIRONMENT"
 	EnvChangeLogUrl   = "CHANGELOG_URL"
 	EnvReleasesUrl    = "RELEASES_URL"
 	EnvSlackPretext   = "SLACK_PRETEXT"
 	EnvVersionName    = "VERSION_NAME"
+	EnvBaseUrl        = "BASE_URL"
 )
 
 type Webhook struct {
@@ -89,8 +90,8 @@ func main() {
 			Value: os.Getenv(EnvVersionName),
 			Short: true,
 		}, {
-			Title: "Variants",
-			Value: os.Getenv(EnvVariants),
+			Title: "Environment",
+			Value: os.Getenv(EnvEnvironment),
 			Short: true,
 		},
 		{
@@ -101,6 +102,11 @@ func main() {
 		{
 			Title: "Triggered by",
 			Value: envOr(EnvGithubActor, "N/A"),
+			Short: true,
+		},
+		{
+			Title: "Base URL",
+			Value: envOr(EnvBaseUrl, "N/A"),
 			Short: true,
 		},
 	}
