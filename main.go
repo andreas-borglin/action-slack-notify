@@ -26,7 +26,7 @@ const (
 	EnvChangeLogUrl   = "CHANGELOG_URL"
 	EnvReleasesUrl    = "RELEASES_URL"
 	EnvSlackPretext   = "SLACK_PRETEXT"
-	EnvVersionName    = "VERSION_NAME
+	EnvVersionName    = "VERSION_NAME"
 )
 
 type Webhook struct {
