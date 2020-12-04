@@ -83,96 +83,80 @@ func main() {
 		version = refShort	
 	}
 	if version != "" {
-		versionfields := []Field{
-			{
-				Title: "Version",
-				Value: version,
-				Short: true,
-			},
+		versionfield := Field{
+			Title: "Version",
+			Value: version,
+			Short: true,
 		}
-		fields = append(fields..., versionfields)
+		fields = append(fields, versionfield)
 	}
 	
 	variants := os.Getenv(EnvVariants)
 	if variants != "" {
-		variantfields := []Field{
-			{
-				Title: "Variants",
-				Value: variants,
-				Short: true,
-			},
+		variantfield := Field{
+			Title: "Variants",
+			Value: variants,
+			Short: true,
 		}
-		fields = append(fields..., variantfields)
+		fields = append(fields, variantfield)
 	}
 	
 	environments := os.Getenv(EnvEnvironments)
 	if environments != "" {
-		envfields := []Field{
-			{
-				Title: "Environments",
-				Value: environments,
-				Short: true,
-			},
+		envfield := Field{
+			Title: "Environments",
+			Value: environments,
+			Short: true,
 		}
-		fields = append(fields..., envfields)
+		fields = append(fields, envfield)
 	}
 	
 	if !isTag {
-		builtFromFields := []Field{
-			{
-				Title: "Built from",
-				Value: refShort,
-				Short: true,
-			},
+		builtFromField := Field{
+			Title: "Built from",
+			Value: refShort,
+			Short: true,
 		}
-		fields = append(fields..., builtFromFields)
+		fields = append(fields, builtFromField)
 	}
 	
-	actionedByFields := []Field{
-		{
-			Title: "Actioned by",
-			Value: envOr(EnvGithubActor, "Unknown"),
-			Short: true,
-		},
+	actionedByField := Field{
+		Title: "Actioned by",
+		Value: envOr(EnvGithubActor, "Unknown"),
+		Short: true,
 	}
-	fields = append(fields..., actionedByFields)	
+	fields = append(fields, actionedByField)	
 	
 	baseUrl := os.Getenv(EnvBaseUrl)
 	if baseUrl != "" {
-		baseUrlFields := []Field{
-			{
-				Title: "Base URL",
-				Value: baseUrl,
-				Short: true,
-			},
+		baseUrlField := Field{
+			Title: "Base URL",
+			Value: baseUrl,
+			Short: true,
 		}
-		fields = append(fields..., baseUrlFields)
+		fields = append(fields, baseUrlField)
 	}
 	
 	actions := []Action{}
 	
 	changeLogUrl := os.Getenv(EnvChangeLogUrl)
 	if changeLogUrl != "" {
-		changeLogUrlActions := []Action{
-			{
-				Type: "button",
-				Text: "Changelog",
-				Url: changeLogUrl,
-			},
+		changeLogUrlAction := Action{
+			Type: "button",
+			Text: "Changelog",
+			Url: changeLogUrl,
 		}
-		actions = append(actions..., changeLogUrlActions)
+		actions = append(actions, changeLogUrlAction)
 	}
 
 	releaseUrl := os.Getenv(EnvReleaseUrl)
 	if releaseUrl != "" {
-		releaseUrlActions := []Action{
-			{
-				Type: "button",
-				Text: "View release",
-				Url: releaseUrl,
-			},
+		releaseUrlAction := Action{
+			Type: "button",
+			Text: "View release",
+			Url: releaseUrl,
 		}
-		actions = append(actions..., releaseUrlActions)
+		actions = append(actions, releaseUrlAction)
 	}
 
 	msg := Webhook{
