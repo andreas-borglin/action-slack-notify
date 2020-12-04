@@ -90,7 +90,7 @@ func main() {
 				Short: true,
 			},
 		}
-		fields = append(versionfields, fields...)
+		fields = append(fields..., versionfields)
 	}
 	
 	variants := os.Getenv(EnvVariants)
@@ -102,7 +102,7 @@ func main() {
 				Short: true,
 			},
 		}
-		fields = append(variantfields, fields...)
+		fields = append(fields..., variantfields)
 	}
 	
 	environments := os.Getenv(EnvEnvironments)
@@ -114,7 +114,7 @@ func main() {
 				Short: true,
 			},
 		}
-		fields = append(envfields, fields...)
+		fields = append(fields..., envfields)
 	}
 	
 	if !isTag {
@@ -125,7 +125,7 @@ func main() {
 				Short: true,
 			},
 		}
-		fields = append(builtFromFields, fields...)
+		fields = append(fields..., builtFromFields)
 	}
 	
 	actionedByFields := []Field{
@@ -135,7 +135,7 @@ func main() {
 			Short: true,
 		},
 	}
-	fields = append(actionedByFields, fields...)	
+	fields = append(fields..., actionedByFields)	
 	
 	baseUrl := os.Getenv(EnvBaseUrl)
 	if baseUrl != "" {
@@ -146,7 +146,7 @@ func main() {
 				Short: true,
 			},
 		}
-		fields = append(baseUrlFields, fields...)
+		fields = append(fields..., baseUrlFields)
 	}
 	
 	actions := []Action{}
@@ -160,7 +160,7 @@ func main() {
 				Url: changeLogUrl,
 			},
 		}
-		actions = append(changeLogUrlActions, actions...)
+		actions = append(actions..., changeLogUrlActions)
 	}
 
 	releaseUrl := os.Getenv(EnvReleaseUrl)
@@ -172,7 +172,7 @@ func main() {
 				Url: releaseUrl,
 			},
 		}
-		actions = append(releaseUrlActions, actions...)
+		actions = append(actions..., releaseUrlActions)
 	}
 
 	msg := Webhook{
