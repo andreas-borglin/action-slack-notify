@@ -11,22 +11,19 @@ import (
 
 const (
 	EnvSlackWebhook   = "SLACK_WEBHOOK"
-	EnvSlackIcon      = "SLACK_ICON"
-	EnvSlackIconEmoji = "SLACK_ICON_EMOJI"
 	EnvSlackChannel   = "SLACK_CHANNEL"
 	EnvSlackTitle     = "SLACK_TITLE"
 	EnvSlackMessage   = "SLACK_MESSAGE"
 	EnvSlackColor     = "SLACK_COLOR"
-	EnvSlackUserName  = "SLACK_USERNAME"
 	EnvSlackFooter    = "SLACK_FOOTER"
 	EnvGithubActor    = "GITHUB_ACTOR"
-	EnvSiteName       = "SITE_NAME"
-	EnvHostName       = "HOST_NAME"
 	EnvVariants       = "VARIANTS"
+	EnvEnvironment    = "ENVIRONMENT"
 	EnvChangeLogUrl   = "CHANGELOG_URL"
-	EnvReleasesUrl    = "RELEASES_URL"
+	EnvReleaseUrl     = "RELEASE_URL"
 	EnvSlackPretext   = "SLACK_PRETEXT"
 	EnvVersionName    = "VERSION_NAME"
+	EnvBaseUrl        = "BASE_URL"
 )
 
 type Webhook struct {
@@ -69,67 +66,123 @@ func main() {
 		fmt.Fprintln(os.Stderr, "URL is required")
 		os.Exit(1)
 	}
-	text := os.Getenv(EnvSlackMessage)
-	if text == "" {
-		fmt.Fprintln(os.Stderr, "Message is required")
-		os.Exit(1)
-	}
 	
 	ref := os.Getenv("GITHUB_REF")
 	refStart := 10
+	isTag := true
 	if strings.Contains(ref, "heads") {
 		refStart = 11	
+		isTag = false
 	}
 	refShort := ref[refStart:len(ref)]
 
 	fields := []Field{}
-	mainFields := []Field{
+	
+	version := os.Getenv(EnvVersionName)
+	if version == "" && isTag {
+		version = refShort	
+	}
+	if version != "" {
+		versionfields := []Field{
+			{
+				Title: "Version",
+				Value: version,
+				Short: true,
+			},
+		}
+		fields = append(versionfields, fields...)
+	}
+	
+	variants := os.Getenv(EnvVariants)
+	if variants != "" {
+		variantfields := []Field{
+			{
+				Title: "Variants",
+				Value: variants,
+				Short: true,
+			},
+		}
+		fields = append(variantfields, fields...)
+	}
+	
+	environments := os.Getenv(EnvEnvironments)
+	if environments != "" {
+		envfields := []Field{
+			{
+				Title: "Environments",
+				Value: environments,
+				Short: true,
+			},
+		}
+		fields = append(envfields, fields...)
+	}
+	
+	if !isTag {
+		builtFromFields := []Field{
+			{
+				Title: "Built from",
+				Value: refShort,
+				Short: true,
+			},
+		}
+		fields = append(builtFromFields, fields...)
+	}
+	
+	actionedByFields := []Field{
 		{
-			Title: "Version",
-			Value: os.Getenv(EnvVersionName),
-			Short: true,
-		}, {
-			Title: "Variants",
-			Value: os.Getenv(EnvVariants),
-			Short: true,
-		},
-		{
-			Title: "Built from",
-			Value: refShort,
-			Short: true,
-		},
-		{
-			Title: "Triggered by",
-			Value: envOr(EnvGithubActor, "N/A"),
+			Title: "Actioned by",
+			Value: envOr(EnvGithubActor, "Unknown"),
 			Short: true,
 		},
 	}
-	fields = append(mainFields, fields...)
+	fields = append(actionedByFields, fields...)	
 	
-	actions:= []Action {
-		{
-			Type: "button",
-			Text: "Changelog",
-			Url: os.Getenv(EnvChangeLogUrl),
-		},
-		{
-			Type: "button",
-			Text: "View release",
-			Url: os.Getenv(EnvReleasesUrl),
-		},
+	baseUrl := os.Getenv(EnvBaseUrl)
+	if baseUrl != "" {
+		baseUrlFields := []Field{
+			{
+				Title: "Base URL",
+				Value: baseUrl,
+				Short: true,
+			},
+		}
+		fields = append(baseUrlFields, fields...)
+	}
+	
+	actions := []Action{}
+	
+	changeLogUrl := os.Getenv(EnvChangeLogUrl)
+	if changeLogUrl != "" {
+		changeLogUrlActions := []Action{
+			{
+				Type: "button",
+				Text: "Changelog",
+				Url: changeLogUrl,
+			},
+		}
+		actions = append(changeLogUrlActions, actions...)
+	}
+
+	releaseUrl := os.Getenv(EnvReleaseUrl)
+	if releaseUrl != "" {
+		releaseUrlActions := []Action{
+			{
+				Type: "button",
+				Text: "View release",
+				Url: releaseUrl,
+			},
+		}
+		actions = append(releaseUrlActions, actions...)
 	}
 
 	msg := Webhook{
-		UserName:  os.Getenv(EnvSlackUserName),
-		IconURL:   os.Getenv(EnvSlackIcon),
-		IconEmoji: os.Getenv(EnvSlackIconEmoji),
 		Channel:   os.Getenv(EnvSlackChannel),
 		Attachments: []Attachment{
 			{
 				Fallback:   envOr(EnvSlackMessage, "GITHUB_ACTION="+os.Getenv("GITHUB_ACTION")+" \n GITHUB_ACTOR="+os.Getenv("GITHUB_ACTOR")+" \n GITHUB_EVENT_NAME="+os.Getenv("GITHUB_EVENT_NAME")+" \n GITHUB_REF="+os.Getenv("GITHUB_REF")+" \n GITHUB_REPOSITORY="+os.Getenv("GITHUB_REPOSITORY")+" \n GITHUB_WORKFLOW="+os.Getenv("GITHUB_WORKFLOW")),
 				Color:      envOr(EnvSlackColor, "good"),
 				Pretext:    envOr(EnvSlackPretext, ""),
-				Footer:     envOr(EnvSlackFooter, "<https://github.com/rtCamp/github-actions-library|Powered By rtCamp's GitHub Actions Library>"),
+				Footer:     envOr(EnvSlackFooter, "AEVI Slack Notification"),
 				Fields:     fields,
 				Actions:    actions,
 			},
