@@ -18,7 +18,7 @@ const (
 	EnvSlackFooter    = "SLACK_FOOTER"
 	EnvGithubActor    = "GITHUB_ACTOR"
 	EnvVariants       = "VARIANTS"
-	EnvEnvironment    = "ENVIRONMENT"
+	EnvEnvironments   = "ENVIRONMENTS"
 	EnvChangeLogUrl   = "CHANGELOG_URL"
 	EnvReleaseUrl     = "RELEASE_URL"
 	EnvSlackPretext   = "SLACK_PRETEXT"
